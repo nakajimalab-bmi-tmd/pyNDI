@@ -21,6 +21,27 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="aurora.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="crc16.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="INIT.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ndiCommandHandler.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ndiSerial.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ndiTrackingSystem.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="polaris.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="pyNDI.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
