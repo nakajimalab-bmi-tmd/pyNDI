@@ -24,10 +24,10 @@
     <Compile Include="aurora.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="crc16.py">
+    <Compile Include="COMM.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="INIT.py">
+    <Compile Include="crc16.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ndiCommandHandler.py">
