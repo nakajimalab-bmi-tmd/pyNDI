@@ -9,10 +9,13 @@ class command_base:
         pass
 
     def send_command(self, serial : Serial):
-        serial.write(self.get_command().encode('ascii'))
+        buffer = crc16.append(self.get_command().encode('ascii')) + b'\r'
+        #print ('sending ', buffer)
+        serial.write(buffer)
 
     def recv_command(self, serial : Serial):
         buffer = serial.read_until(b'\r')[:-1]
+        #print ('received', buffer)
         crc16.check(buffer)
         self.rep = buffer[:-4]
  

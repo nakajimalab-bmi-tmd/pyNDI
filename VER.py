@@ -21,8 +21,9 @@ class VER(command_base):
         self.ver_info = version_information()
 
     def get_command(self):
-        return 'VER:{:02X}'.format(self.option)
+        return 'VER:{:01X}'.format(self.option)
     def read_reply(self):
+        super().read_reply()
         it = iter(self.rep.splitlines())
         if self.option == VER.COMBINED_FIRMWARE_REVISION_NUMBER:
             self.ver_info.combined_firmware_revision = next(it)

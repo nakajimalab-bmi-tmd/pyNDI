@@ -10,6 +10,6 @@ class PENA(command_base):
 
     def read_reply(self):
         super().read_reply()
-        if rep[0:7] == b'Warning':
+        if self.rep[0:7] == b'Warning':
             print(self.rep.decode('utf-8'), 'in', self.get_command())
 

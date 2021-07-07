@@ -6,7 +6,7 @@ class PHRQ(command_base):
 
     def read_reply(self):
         super().read_reply()
-        if len(rep) != 2:
+        if len(self.rep) != 2:
             raise ValueError
-        return int(rep, 16)
+        return int(self.rep, 16)
 

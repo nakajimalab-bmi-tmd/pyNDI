@@ -11,6 +11,8 @@ from RESET import *
 from TSTART import *
 from TSTOP import *
 from BX import *
+from TX import *
+from VER import *
 
 class ndiTrackingSystem(object):
     """description of class"""
@@ -22,54 +24,51 @@ class ndiTrackingSystem(object):
         self.read = 0
         self.write = 1
 
+        self.ver = version_information()
+
     def command(self, cmd : command_base):
         cmd.pre_command(self.serial)
         cmd.send_command(self.serial)
         cmd.recv_command(self.serial)
-        cmd.read_reply(self.serial)
+        rep = cmd.read_reply()
         cmd.post_command(self.serial)
+        return rep
 
     #def auto_connect(self):
     #    pass
 
     def connect(self, port_name):
-        self.serial.setPort(port_name)
+        self.serial.port = port_name
+        self.serial.baudrate = 9600
         self.serial.open()
 
     def initialize(self):
-        try:
-            self.command(COMM())
-            self.command(INIT())
-        except:
-            self.command(RESET())
-            self.command(COMM())
-            self.command(INIT())
-        else:
-            pass
+        self.command(RESET())
+        self.ver = self.command(VER())
+        print(self.ver.type_of_firmware)
+        print(self.ver.ndi_serial_number)
+        print(self.ver.copyright_information)
+        self.command(COMM())
+        self.command(INIT())
 
-    def add_tool(self, srom_file):
-        with open(srom_file, 'rb') as f:
-            while True:
-                block = f.read(64)
-                if not block:
-                    break
-        pass
-
-    def activate(self):
+    def activate_wired_tools(self):
         # 1. Free port handles that need to be freed
         port_status = self.command(PHSR(0x01))
-        for ph in port_status.keys():
-            self.command(PHF(ph))
+        if port_status != None:
+            for ph in port_status.keys():
+                self.command(PHF(ph))
 
         # 2. Initialize port handles that are not initialized
         port_status = self.command(PHSR(0x02))
-        for ph in port_status.keys():
-            self.command(PINIT(ph))
+        if port_status != None:
+            for ph in port_status.keys():
+                self.command(PINIT(ph))
 
         # 3. Enable port handles that are initialized, but not enabled 
         port_status = self.command(PHSR(0x03))
-        for ph in port_status.keys():
-            self.command(PENA(ph))
+        if port_status != None:
+            for ph in port_status.keys():
+                self.command(PENA(ph))
 
     def start_tracking(self):
         self.command(TSTART())
@@ -87,13 +86,13 @@ class ndiTrackingSystem(object):
         """loop and recieve tracking data"""
         try:
             while self.tracking:
-                self.trackers[write], self.system_status[write] = self.command(BX())
-                read, write = write, read
+                self.trackers[self.write], self.system_status[self.write] = self.command(BX())
+                self.read, self.write = self.write, self.read
         except:
             self.tracking = False
 
     def update(self):
-        return (self.trackers[read], self.system_status[0])
+        return (self.trackers[self.read], self.system_status[self.read])
 
 if __name__ == '__main__':
     tracker = ndiTrackingSystem()

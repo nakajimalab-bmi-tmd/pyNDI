@@ -8,12 +8,19 @@ class polaris(ndiTrackingSystem):
     def __init__(self):
         super().__init__()
 
+    def initialize(self):
+        super().initialize()
+        # Set illuminator rate to 60 Hz in Polaris Spectra
+        if self.ver.type_of_firmware == b'Polaris Spectra Control Firmware':
+            print('This is spectra')
+            
     def add_wireless_tool(self, srom_file):
         with open(srom_file, 'rb') as f:
             # 1. Free port handles that need to be freed
             port_status = self.command(PHSR(0x01))
-            for ph in port_status.keys():
-                self.command(PHF(ph))
+            if port_status != None:
+                for ph in port_status.keys():
+                    self.command(PHF(ph))
 
             # 2. Assign a port handle to a tool
             ph = self.command(PHRQ())
@@ -34,6 +41,10 @@ class polaris(ndiTrackingSystem):
             # 5. Enable the handle
             self.command(PENA(ph))
 
-if __name__ == '__main__':
-    p = polaris()
-    p.add_wireless_tool('8700340.rom')
+            # 6. check the port enabled
+            port_status = self.command(PHSR(0x04))
+            if port_status != None:
+                print('The port is not enabled...')
+                pass
+            else:
+                print('The wireless toll was enabled at ', ph)
