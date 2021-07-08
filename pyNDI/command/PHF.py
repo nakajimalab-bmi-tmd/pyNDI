@@ -1,4 +1,4 @@
-from command_base import command_base
+from pyNDI.command.command_base import command_base
 
 class PHF(command_base):
     def __init__(self, port_handle):

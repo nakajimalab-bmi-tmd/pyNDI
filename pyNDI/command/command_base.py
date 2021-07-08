@@ -1,5 +1,5 @@
 from serial import *
-from crc16 import *
+from pyNDI.command.crc16 import *
 
 class command_base:
     def get_command(self):

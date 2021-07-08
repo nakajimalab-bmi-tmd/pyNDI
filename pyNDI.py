@@ -6,7 +6,7 @@ from polaris import *
 
 try:
     t = polaris()
-    t.connect('COM10')
+    t.connect('/dev/ttyS1')
     t.initialize()
     t.activate_wired_tools()
     t.add_wireless_tool('8700340.rom')
@@ -23,5 +23,8 @@ try:
                 print(k, "Disabled")
 
         time.sleep(0.1)
-except:
+except KeyboardInterrupt:
     t.stop_tracking()
+    t.command(COMM(0, 0, 0, 0, 0))
+except:
+    pass

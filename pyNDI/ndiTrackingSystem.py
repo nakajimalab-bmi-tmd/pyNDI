@@ -1,18 +1,6 @@
 import threading
 from serial import *
-from COMM import *
-from INIT import *
-from PHF import *
-from PHRQ import *
-from PHSR import *
-from PINIT import *
-from PENA import *
-from RESET import *
-from TSTART import *
-from TSTOP import *
-from BX import *
-from TX import *
-from VER import *
+from pyNDI.command import *
 
 class ndiTrackingSystem(object):
     """description of class"""
@@ -37,19 +25,29 @@ class ndiTrackingSystem(object):
     #def auto_connect(self):
     #    pass
 
+    def get_optimal_baudrate(self):
+        return COMM.Bd_115200 # default
+
     def connect(self, port_name):
         self.serial.port = port_name
         self.serial.baudrate = 9600
         self.serial.open()
-
-    def initialize(self):
-        self.command(RESET())
-        self.ver = self.command(VER())
-        print(self.ver.type_of_firmware)
-        print(self.ver.ndi_serial_number)
-        print(self.ver.copyright_information)
-        self.command(COMM())
-        self.command(INIT())
+ 
+    def initialize(self, tried = 0):
+        try:
+            self.ver = self.command(VER())    
+            print(self.ver.type_of_firmware)
+            print(self.ver.ndi_serial_number)
+            print(self.ver.copyright_information)
+            self.command(COMM(self.get_optimal_baudrate()))
+            self.command(INIT())
+        except:
+            if tried == 0:
+                tried += 1
+                self.command(RESET())
+                self.initialize()
+            else:
+                raise IOError('cannot connect to ', self.serial.port)
 
     def activate_wired_tools(self):
         # 1. Free port handles that need to be freed

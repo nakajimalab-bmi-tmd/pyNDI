@@ -1,4 +1,4 @@
-from command_base import *
+from pyNDI.command.command_base import *
 
 class COMM(command_base):
     Bd_115200 = 5

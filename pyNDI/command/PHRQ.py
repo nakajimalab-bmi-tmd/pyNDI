@@ -1,4 +1,4 @@
-from command_base import command_base
+from pyNDI.command.command_base import command_base
 
 class PHRQ(command_base):
     def get_command(self):

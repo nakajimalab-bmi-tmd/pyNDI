@@ -1,6 +1,6 @@
-from command_base import command_base
-from handle_data import *
-from crc16 import crc16
+from pyNDI.command.command_base import command_base
+from pyNDI.handle_data import *
+from pyNDI.command.crc16 import crc16
 import numpy as np
 import quaternion
 from serial import Serial

@@ -1,6 +1,7 @@
-from ndiTrackingSystem import *
-from PHRQ import *
-from PVWR import *
+from pyNDI.ndiTrackingSystem import *
+from pyNDI.command.PHRQ import *
+from pyNDI.command.PVWR import *
+from pyNDI.command.SET import *
 
 class polaris(ndiTrackingSystem):
     """description of class"""
@@ -8,11 +9,18 @@ class polaris(ndiTrackingSystem):
     def __init__(self):
         super().__init__()
 
+    def get_optimal_baudrate(self):
+        if self.ver.type_of_firmware == b'Polaris Spectra Control Firmware':
+            return COMM.Bd_1228739
+
+        return super().get_optimal_baudrate()
+    def connect(self, port_name):
+        super().connect(port_name)
+
     def initialize(self):
         super().initialize()
-        # Set illuminator rate to 60 Hz in Polaris Spectra
         if self.ver.type_of_firmware == b'Polaris Spectra Control Firmware':
-            print('This is spectra')
+            self.command(SET('Param.Tracking.Illuminator Rate=60'))
             
     def add_wireless_tool(self, srom_file):
         with open(srom_file, 'rb') as f:
