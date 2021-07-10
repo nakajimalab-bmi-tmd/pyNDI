@@ -32,7 +32,7 @@ class polaris(ndiTrackingSystem):
 
             # 2. Assign a port handle to a tool
             ph = self.command(PHRQ())
-
+            
             # 3. Load tool difinition file
             rom_data = f.read()
             rom_data = rom_data + bytes(64 - len(rom_data) % 64)
@@ -48,11 +48,4 @@ class polaris(ndiTrackingSystem):
 
             # 5. Enable the handle
             self.command(PENA(ph))
-
-            # 6. check the port enabled
-            port_status = self.command(PHSR(0x04))
-            if port_status != None:
-                print('The port is not enabled...')
-                pass
-            else:
-                print('The wireless toll was enabled at ', ph)
+            print('The wireless tool was enabled at ', ph)

@@ -21,8 +21,10 @@ class command_base:
  
     def read_reply(self):
         ''' default reply is OKAY '''
-        if self.rep == b'ERROR':
+        if self.rep.startswith(b'ERROR'):
             raise ValueError(self.rep.decode('utf-8'), 'in', self.get_command())
+        elif self.rep.startswith(b'WARNING'):
+            print(self.rep.decode('utf-8'))
 
     def post_command(self, serial):
         pass

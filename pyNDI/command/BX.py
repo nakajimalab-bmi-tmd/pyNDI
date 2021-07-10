@@ -35,12 +35,11 @@ class BX(command_base):
                 raise ValueError(self.rep.decode('utf-8'), 'in', self.get_command())
 
         header += serial.read(4)
-        #print(header.hex())
         if crc16.calc(header[:-2]) != int.from_bytes(header[-2:], 'little'):
             raise ValueError('CRC failure in header CRC')
         length = int.from_bytes(header[2:4], 'little')
         body = serial.read(length+2) # add binary crc
-        #print(body.hex())
+        #print(header.hex(), body.hex())
         if crc16.calc(body[:-2]) != int.from_bytes(body[-2:], 'little'):
             raise ValueError('CRC failure in header CRC')
         self.unpack_data(body[:-2])
@@ -83,8 +82,7 @@ class BX(command_base):
         # <System Status>
         self.system_status = int.from_bytes(buffer[index:index+2], 'little')
         #print('system status', self.system_status)
-        index += 2
-        #print(self.system_status)
+        index += 2        
         #print(index, '/', len(buffer))
 
     def read_reply(self):

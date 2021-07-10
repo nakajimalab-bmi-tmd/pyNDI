@@ -1,18 +1,19 @@
-### pyNDI library : pure python library for NDI tracking systems (Polaris, Aurora)
+### aurora_tracking.py in pyNDI library : a sample aurora tracking for pyNDI
 ### ONOGI, Shinya, PhD, Department of Biomedical Information, Institute of Biomaterials and Bioengineering
 ### Tokyo Medical and Dental University
+
 import time
-from polaris import *
+from pyNDI.aurora import *
+import keyboard
 
 try:
-    t = polaris()
-    t.connect('/dev/ttyS1')
+    t = aurora()
+    t.connect('COM10')
+    t.command(RESET())
+    #t.connect('/dev/ttyS1')
     t.initialize()
-    t.activate_wired_tools()
-    t.add_wireless_tool('8700340.rom')
     t.start_tracking()
-
-    while True:
+    while not keyboard.is_pressed('escape'):
         data, stat = t.update()
         for k, v in data.items():
             if v.status == handle_data.Valid:
@@ -21,9 +22,8 @@ try:
                 print(k, "Missing")
             else:
                 print(k, "Disabled")
+        time.sleep(0.05)
 
-        time.sleep(0.1)
-except KeyboardInterrupt:
     t.stop_tracking()
     t.command(COMM(0, 0, 0, 0, 0))
 except:

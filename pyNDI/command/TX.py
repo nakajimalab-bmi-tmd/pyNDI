@@ -8,5 +8,6 @@ class TX(command_base):
     
     def read_reply(self):
         super().read_reply()
+        print(self.rep)
         return self.rep
 
