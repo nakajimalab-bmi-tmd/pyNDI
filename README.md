@@ -2,7 +2,7 @@
 **PyNDI** is a Python package that provides communication with Polaris and Aurora systems, Northern Digital Inc.
 
 ## Install
-Just copy 'pyNDI' directory to your source directory. setup.py is not prepared in the present.
+$> pip install --no-index --find-links=. pyNDI
 
 ## How to use it
 See sample/polaris_tracking.py
