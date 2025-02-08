@@ -20,7 +20,7 @@ try:
         data, stat = t.update()
         for k, v in data.items():
             if v.status == handle_data.Valid:
-                print(k, v.transformation_data.translation)
+                print(k, v.transformation_data.as_transform_matrix())
             elif v.status == handle_data.Missing:
                 print(k, "Missing")
 
