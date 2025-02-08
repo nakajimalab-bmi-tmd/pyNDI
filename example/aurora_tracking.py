@@ -12,6 +12,7 @@ try:
     t.command(RESET())
     #t.connect('/dev/ttyS1')
     t.initialize()
+    t.activate_wired_tools()
     t.start_tracking()
     while not keyboard.is_pressed('escape'):
         data, stat = t.update()

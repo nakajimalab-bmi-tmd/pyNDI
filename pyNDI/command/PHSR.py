@@ -9,6 +9,7 @@ class PHSR(command_base):
         return 'PHSR:{:02X}'.format(self.option)
 
     def read_reply(self):
+        print(self.rep)
         self.num_port_handles = int(self.rep[0:2], 16)
         index = 2
         for i in range(self.num_port_handles):
@@ -17,4 +18,5 @@ class PHSR(command_base):
             status = int(self.rep[index:index+3], 16)
             index += 3
             self.handle_status[handle] = status
+        # print(self.handle_status)
         return self.handle_status

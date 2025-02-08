@@ -2,6 +2,7 @@ from pyNDI.ndiTrackingSystem import *
 from pyNDI.command.PHRQ import *
 from pyNDI.command.PVWR import *
 from pyNDI.command.SET import *
+from pyNDI.command.GETINFO import *
 
 class polaris(ndiTrackingSystem):
     """description of class"""
@@ -20,8 +21,17 @@ class polaris(ndiTrackingSystem):
     def initialize(self):
         super().initialize()
         if self.ver.type_of_firmware == b'Polaris Spectra Control Firmware':
-            self.command(SET('Param.Tracking.Illuminator Rate=60'))
-            
+            self.set_illuminator_rate()
+
+    def set_illuminator_rate(self, rate = 2):
+        try:
+            print('setting illuminator rate to ', rate)
+            self.command(SET('Param.Tracking.Illuminator Rate=' + str(rate)))
+            return True
+        except ValueError as e:
+            print('failed to set illuminator rate to ', rate)
+            return False
+
     def add_wireless_tool(self, srom_file):
         with open(srom_file, 'rb') as f:
             # 1. Free port handles that need to be freed

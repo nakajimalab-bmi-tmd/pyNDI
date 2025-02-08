@@ -12,3 +12,7 @@ from pyNDI.command.TSTOP import *
 from pyNDI.command.BX import *
 from pyNDI.command.TX import *
 from pyNDI.command.VER import *
+from pyNDI.command.APIREV import *
+from pyNDI.command.GETINFO import *
+from pyNDI.command.GET import *
+from pyNDI.command.PHINF import *

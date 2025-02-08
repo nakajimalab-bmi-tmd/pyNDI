@@ -1,6 +1,8 @@
+import time
 from pyNDI.command.command_base import *
 
 class COMM(command_base):
+    Bd_9600 = 0
     Bd_115200 = 5
     Bd_921600 = 6
     Bd_1228739 = 7 # Polaris Spectra USB only
@@ -33,6 +35,8 @@ class COMM(command_base):
             settings['baudrate'] = 115200
         elif self.baudrate == COMM.Bd_1228739:
             settings['baudrate'] = 19200 # Polaris API Guide, pp.59 
+        elif self.baudrate == COMM.Bd_9600:
+            settings['baudrate'] = 9600
         if self.databits == COMM.Databits_8:
             settings['bytesize'] = 8
         else:
@@ -52,5 +56,4 @@ class COMM(command_base):
         else: #COMM.Handshake_ON
             settings['dsrdtr'] = True
         serial.apply_settings(settings)
-        time.sleep(0.1)
 

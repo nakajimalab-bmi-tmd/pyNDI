@@ -8,10 +8,11 @@ import keyboard
 
 try:
     t = polaris()
-    t.connect('COM6')
-    t.command(RESET())
+    t.connect('COM4')
+    #t.command(RESET())
     #t.connect('/dev/ttyS1')
     t.initialize()
+    t.activate_wired_tools()
     t.add_wireless_tool('8700340.rom')
     t.start_tracking()
 
@@ -22,12 +23,9 @@ try:
                 print(k, v.transformation_data.translation)
             elif v.status == handle_data.Missing:
                 print(k, "Missing")
-            else:
-                print(k, "Disabled")
 
         time.sleep(0.1)
-
     t.stop_tracking()
-    t.command(COMM(0, 0, 0, 0, 0))            
-except:
+except Exception as e:
+    print("Error: ", e.args)
     pass
