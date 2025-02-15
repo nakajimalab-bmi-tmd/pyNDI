@@ -1,4 +1,5 @@
 import threading
+from logging import getLogger, debug, info, warning, error
 from serial import *
 from pyNDI.command import *
 
@@ -15,6 +16,7 @@ class ndiTrackingSystem(object):
         self.ver = version_information()
 
     def __del__(self):
+        getLogger('pyNDI').debug('__del__')
         if self.tracking:
             self.stop_tracking()
         self.command(COMM(0, 0, 0, 0, 0))
@@ -22,6 +24,7 @@ class ndiTrackingSystem(object):
 
     def command(self, cmd : command_base):
         #self.lock.acquire()
+        logger = getLogger('pyNDI')
         for i in range(3):
             try:
                 cmd.pre_command(self.serial)
@@ -31,7 +34,7 @@ class ndiTrackingSystem(object):
                 cmd.post_command(self.serial)
                 return rep
             except ValueError as e:
-                print('Error:', e.args)
+                logger.error(e.args)
                 if i == 2:
                     raise e
                 continue
@@ -45,24 +48,35 @@ class ndiTrackingSystem(object):
     def connect(self, port_name):
         self.serial.port = port_name
         self.serial.baudrate = 9600
+        self.serial.bytesize = EIGHTBITS
+        self.serial.parity = PARITY_NONE
+        self.serial.stopbits = STOPBITS_ONE
+        self.serial.timeout = 1
+        self.serial.xonxoff = False
+        self.serial.rtscts = False
+        self.serial.dsrdtr = False
         self.serial.open()
  
-    def initialize(self, tried = 3):
+    def initialize(self):
+        self.initialize_system()
+
+    def initialize_system(self, tried = 3):
         try:
+            logger = getLogger('pyNDI')
             self.ver = self.command(VER())    
-            print(self.ver.type_of_firmware)
-            print(self.ver.ndi_serial_number)
-            print(self.ver.copyright_information)
+            logger.info(self.ver.type_of_firmware)
+            logger.info(self.ver.ndi_serial_number)
+            logger.info(self.ver.copyright_information)
             apirev = self.command(APIREV())
-            print(apirev)
+            logger.info(apirev)
             self.command(COMM(self.get_optimal_baudrate()))
             self.command(INIT())
         except:
             if tried > 0:
-                print('retry to initialize')
+                logger.warning('retry to initialize')
                 tried -= 1
                 #self.command(RESET())
-                self.initialize(tried)
+                self.initialize_system(tried)
             else:
                 raise IOError('cannot connect to ', self.serial.port)
 
@@ -87,11 +101,11 @@ class ndiTrackingSystem(object):
                 if tool_info.tool_type == b'08000000': # strober
                     continue
                 self.command(PENA(ph))
-                print('Port {:02X} is enabled'.format(ph))
+                getLogger('pyNDI').info('Port {:02X} is enabled'.format(ph))
         pass
 
     def start_tracking(self):
-        print('Start tracking')
+        getLogger('pyNDI').info('Start tracking')
         self.command(TSTART())
         self.tracking = True
         # self.tracking_thread = threading.Thread(target=self._tracking)
@@ -102,7 +116,7 @@ class ndiTrackingSystem(object):
         self.tracking = False
         # self.tracking_thread.join()
         self.command(TSTOP())
-        print('Stop tracking')
+        getLogger('pyNDI').info('Stop tracking')
 
     def _tracking(self):
         """loop and receive tracking data"""

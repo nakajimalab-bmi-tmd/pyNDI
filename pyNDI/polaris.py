@@ -1,3 +1,5 @@
+from logging import getLogger, debug, info, warning, error
+from serial.tools import list_ports
 from pyNDI.ndiTrackingSystem import *
 from pyNDI.command.PHRQ import *
 from pyNDI.command.PVWR import *
@@ -15,7 +17,20 @@ class polaris(ndiTrackingSystem):
             return COMM.Bd_1228739
 
         return super().get_optimal_baudrate()
-    def connect(self, port_name):
+    
+    def connect(self):
+        ports = list_ports.comports()
+        for port in ports:
+            if port.manufacturer == 'NDI':
+                super().connect(port.device)
+                return port.device
+
+    def connect(self, port_name = None):
+        if port_name == None:
+            ports = list_ports.comports()
+            for port in ports:
+                if port.manufacturer == 'NDI':
+                    port_name = port.device
         super().connect(port_name)
 
     def initialize(self):
@@ -25,11 +40,11 @@ class polaris(ndiTrackingSystem):
 
     def set_illuminator_rate(self, rate = 2):
         try:
-            print('setting illuminator rate to ', rate)
+            getLogger('pyNDI').info('setting illuminator rate to %s', rate)
             self.command(SET('Param.Tracking.Illuminator Rate=' + str(rate)))
             return True
         except ValueError as e:
-            print('failed to set illuminator rate to ', rate)
+            getLogger('pyNDI').warning('failed to set illuminator rate to %s', rate)
             return False
 
     def add_wireless_tool(self, srom_file):
@@ -58,4 +73,4 @@ class polaris(ndiTrackingSystem):
 
             # 5. Enable the handle
             self.command(PENA(ph))
-            print('The wireless tool was enabled at ', ph)
+            getLogger('pyNDI').info('The wireless tool was enabled at %s', ph)

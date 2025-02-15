@@ -1,4 +1,5 @@
 import codecs
+from logging import getLogger, debug, info, warning, error
 from serial import *
 from pyNDI.command.crc16 import *
 
@@ -10,7 +11,7 @@ class command_base:
         pass
 
     def send_command(self, serial : Serial):
-        print('->', self.get_command().encode('ascii'))
+        getLogger('pyNDI').debug('->', self.get_command().encode('ascii'))
         buffer = crc16.append(self.get_command().encode('ascii')) + b'\r'
         #print ('sending ', buffer)
         serial.write(buffer)
@@ -23,11 +24,11 @@ class command_base:
  
     def read_reply(self):
         ''' default reply is OKAY '''
-        print(self.rep.decode('utf-8'))
+        getLogger('pyNDI').debug('<-', self.rep.decode('utf-8'))
         if self.rep.startswith(b'ERROR'):
             raise ValueError(self.rep.decode('utf-8'), 'in', self.get_command())
         elif self.rep.startswith(b'WARNING'):
-            print(self.rep.decode('utf-8'))
+            getLogger('pyNDI').warning(self.rep.decode('utf-8'))
 
     def post_command(self, serial):
         pass

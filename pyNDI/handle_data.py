@@ -1,3 +1,4 @@
+from logging import getLogger, debug
 import numpy as np
 import quaternion
 
@@ -8,7 +9,11 @@ class transformation_data:
         self.error = 0.0
     
     def as_transform_matrix(self):
-        return np.vstack((np.hstack((quaternion.as_rotation_matrix(self.quaternion), self.translation.T)), np.array([0., 0., 0., 1.])))
+        rot_mat = quaternion.as_rotation_matrix(self.quaternion)
+        mat_3x4 = np.hstack((rot_mat, self.translation.reshape(3,1)))
+        mat_4x4 = np.vstack((mat_3x4, np.array([0., 0., 0., 1.])))
+        getLogger('pyNDI').debug("Transformation matrix: \n%s", mat_4x4)
+        return mat_4x4
 
 class handle_data:
     Valid = 0x01
